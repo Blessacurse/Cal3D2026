@@ -25,7 +25,6 @@
             justify-content: center;
         }
 
-        /* El contenedor Liquid Glass */
         .glass-card {
             background: var(--glass);
             backdrop-filter: blur(15px) saturate(180%);
@@ -47,7 +46,7 @@
         }
 
         .input-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
         }
 
         label {
@@ -75,7 +74,7 @@
         }
 
         .results {
-            margin-top: 2rem;
+            margin-top: 1.5rem;
             padding-top: 1.5rem;
             border-top: 1px solid var(--border);
         }
@@ -116,6 +115,11 @@
 <div class="glass-card">
     <h2>3D Print Calc</h2>
     
+    <div class="input-group">
+        <label>Precio de la Bobina ($)</label>
+        <input type="number" id="precioMaterialBobina" value="20" step="0.1" oninput="calcular()">
+    </div>
+
     <div class="input-group">
         <label>Peso de la pieza (gramos)</label>
         <input type="number" id="peso" placeholder="Ej: 210.81" oninput="calcular()">
@@ -158,28 +162,28 @@
 
 <script>
     function calcular() {
-        // Constantes basadas en tu configuración
-        const PRECIO_BOBINA = 20;
+        // Constantes de hardware y ubicación
         const GRAMOS_BOBINA = 1000;
-        const INVERSION_TOTAL = 800; // Impresora + Nacionalización
+        const INVERSION_TOTAL = 800; 
         const VIDA_UTIL_HORAS = 2500;
-        const KWH_COSTO = 0.10; // Caracas 2026
-        const CONSUMO_KW = 0.2; // 200W promedio de la impresora
+        const KWH_COSTO = 0.10; 
+        const CONSUMO_KW = 0.2; 
 
-        // Valores de los inputs
+        // Valores dinámicos de los inputs
+        const precioMaterialInput = parseFloat(document.getElementById('precioMaterialBobina').value) || 0;
         const peso = parseFloat(document.getElementById('peso').value) || 0;
         const tiempo = parseFloat(document.getElementById('tiempo').value) || 0;
         const margen = parseFloat(document.getElementById('margen').value) || 1;
 
-        // Cálculos
-        const material = (peso * (PRECIO_BOBINA / GRAMOS_BOBINA)) * 1.05; // 5% desperdicio
+        // Cálculos con el precio de material dinámico
+        const material = (peso * (precioMaterialInput / GRAMOS_BOBINA)) * 1.05; // 5% desperdicio
         const maquina = (tiempo * (INVERSION_TOTAL / VIDA_UTIL_HORAS));
         const luz = tiempo * CONSUMO_KW * KWH_COSTO;
         
         const costoBase = material + maquina + luz;
         const precioFinal = costoBase * margen;
 
-        // Mostrar resultados
+        // Actualizar interfaz
         document.getElementById('costoMaterial').innerText = `$${material.toFixed(2)}`;
         document.getElementById('costoMaquina').innerText = `$${maquina.toFixed(2)}`;
         document.getElementById('costoLuz').innerText = `$${luz.toFixed(2)}`;
